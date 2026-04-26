@@ -1,16 +1,156 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Instagram Clone</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Instagram Clone</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
 <body>
-    <div id="app">
-        <h1>Instagram Clone</h1>
-        <div id="feed"></div>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="page active">
+  <div class="auth-container">
+    <div class="auth-box">
+      <h1 class="logo">Instagram</h1>
+      <input type="text" id="loginUser" placeholder="Username or email" class="inp"/>
+      <input type="password" id="loginPass" placeholder="Password" class="inp"/>
+      <button class="btn-blue" onclick="App.login()">Log In</button>
+      <div class="or-divider"><span>OR</span></div>
+      <a href="#" class="fb-link"><i class="fab fa-facebook"></i> Log in with Facebook</a>
+      <a href="#" class="forgot">Forgot password?</a>
     </div>
-    <script src="app.js"></script>
+    <div class="auth-box-small">
+      <p>Don't have an account? <a href="#" onclick="App.showPage('signupPage')">Sign up</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- SIGNUP PAGE -->
+<div id="signupPage" class="page">
+  <div class="auth-container">
+    <div class="auth-box">
+      <h1 class="logo">Instagram</h1>
+      <p class="signup-sub">Sign up to see photos and videos from your friends.</p>
+      <button class="btn-fb"><i class="fab fa-facebook"></i> Log in with Facebook</button>
+      <div class="or-divider"><span>OR</span></div>
+      <input type="email" id="signupEmail" placeholder="Mobile Number or Email" class="inp"/>
+      <input type="text" id="signupName" placeholder="Full Name" class="inp"/>
+      <input type="text" id="signupUser" placeholder="Username" class="inp"/>
+      <input type="password" id="signupPass" placeholder="Password" class="inp"/>
+      <button class="btn-blue" onclick="App.signup()">Sign Up</button>
+      <p class="terms">By signing up, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
+    </div>
+    <div class="auth-box-small">
+      <p>Have an account? <a href="#" onclick="App.showPage('loginPage')">Log in</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" class="page">
+  <nav class="navbar">
+    <span class="logo nav-logo" onclick="App.showSection('feed')">Instagram</span>
+    <div class="nav-search-wrap">
+      <i class="fas fa-search search-ico"></i>
+      <input type="text" id="searchInp" placeholder="Search" class="search-inp" oninput="App.search(this.value)"/>
+      <div id="searchDrop" class="search-drop hidden"></div>
+    </div>
+    <div class="nav-icons">
+      <i class="fas fa-home nav-ico" onclick="App.showSection('feed')" title="Home"></i>
+      <i class="fas fa-paper-plane nav-ico" onclick="App.showSection('messages')" title="Messages"></i>
+      <i class="fas fa-compass nav-ico" onclick="App.showSection('explore')" title="Explore"></i>
+      <i class="far fa-heart nav-ico" onclick="App.showSection('notifications')" title="Notifications"></i>
+      <i class="fas fa-plus-square nav-ico" onclick="App.openCreate()" title="Create"></i>
+      <img id="navPic" class="nav-pic" onclick="App.showSection('profile')" src="" alt=""/>
+    </div>
+  </nav>
+
+  <!-- FEED -->
+  <div id="feedSection" class="section active">
+    <div class="feed-wrap">
+      <div class="feed-main">
+        <div class="stories-box" id="storiesBox"></div>
+        <div id="feedPosts"></div>
+      </div>
+      <aside class="sidebar" id="sidebar"></aside>
+    </div>
+  </div>
+
+  <!-- EXPLORE -->
+  <div id="exploreSection" class="section">
+    <div class="explore-grid" id="exploreGrid"></div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div id="notificationsSection" class="section">
+    <div class="notif-wrap">
+      <h3>Notifications</h3>
+      <div id="notifList"></div>
+    </div>
+  </div>
+
+  <!-- MESSAGES -->
+  <div id="messagesSection" class="section">
+    <div class="msg-layout">
+      <div class="msg-list" id="msgList">
+        <div class="msg-list-head"><strong id="msgUsername"></strong></div>
+        <div id="msgThreads"></div>
+      </div>
+      <div class="chat-area" id="chatArea">
+        <div class="chat-empty">
+          <i class="far fa-paper-plane"></i>
+          <h3>Your Messages</h3>
+          <p>Send private photos and messages to a friend.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div id="profileSection" class="section">
+    <div id="profileWrap"></div>
+  </div>
+
+  <!-- CREATE POST MODAL -->
+  <div id="createModal" class="modal hidden">
+    <div class="modal-bg" onclick="App.closeModal('createModal')"></div>
+    <div class="modal-box">
+      <div class="modal-head">
+        <span>Create new post</span>
+        <i class="fas fa-times" onclick="App.closeModal('createModal')"></i>
+      </div>
+      <div id="uploadArea" class="upload-area">
+        <i class="fas fa-photo-video"></i>
+        <p>Drag photos and videos here</p>
+        <input type="file" id="fileInp" accept="image/*" onchange="App.previewImg(event)" hidden/>
+        <button class="btn-blue" style="width:auto;padding:7px 16px" onclick="document.getElementById('fileInp').click()">Select from computer</button>
+      </div>
+      <div id="previewArea" class="hidden" style="padding:16px;display:flex;flex-direction:column;gap:12px">
+        <img id="previewImg" style="width:100%;max-height:400px;object-fit:cover;border-radius:4px" src="" alt=""/>
+        <textarea id="captionInp" placeholder="Write a caption..." rows="4" style="border:1px solid #dbdbdb;border-radius:4px;padding:8px;font-size:14px;resize:none;outline:none;font-family:inherit"></textarea>
+        <button class="btn-blue" onclick="App.createPost()">Share</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- POST VIEW MODAL -->
+  <div id="postModal" class="modal hidden">
+    <div class="modal-bg" onclick="App.closeModal('postModal')"></div>
+    <div class="modal-box post-modal-box" id="postModalContent"></div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <i class="fas fa-home" onclick="App.showSection('feed')"></i>
+    <i class="fas fa-search" onclick="App.showSection('explore')"></i>
+    <i class="fas fa-plus-square" onclick="App.openCreate()"></i>
+    <i class="far fa-heart" onclick="App.showSection('notifications')"></i>
+    <img id="bottomPic" onclick="App.showSection('profile')" src="" alt="" style="width:26px;height:26px;border-radius:50%;object-fit:cover;cursor:pointer"/>
+  </div>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
